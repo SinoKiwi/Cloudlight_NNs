@@ -40,7 +40,10 @@ G = Generator(input_size, hidden_size, output_size)
 
 G.to(device)
 
-G.load_state_dict(torch.load("generator.pt"))
+if torch.cuda.is_available():
+    G.load_state_dict(torch.load("generator_gpu.pt"))
+else:
+    G.load_state_dict(torch.load("generator.pt"))
 
 G.eval()
 
