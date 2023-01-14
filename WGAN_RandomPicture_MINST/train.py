@@ -106,9 +106,19 @@ for epoch in range(num_epochs):
             tqdm.write(f"Epoch:{epoch+1}/{num_epochs}, Step:{i+1}/{total_steps}, G_loss:{G_loss}, D_loss:{D_loss}")
     print(f"Epoch:{epoch+1}/{num_epochs}, G_loss:{G_loss}, D_loss:{D_loss}")
     if ((epoch+1)%5) == 0:
-        torch.save(G.state_dict(), 'generator.pt')
-        torch.save(D.state_dict(), 'discriminator.pt')
+        if torch.cuda.is_available():
+            torch.save(G.state_dict(), 'generator_gpu.pt')
+            torch.save(D.state_dict(), 'discriminator_gpu.pt')
+        else:
+            torch.save(G.state_dict(), 'generator.pt')
+            torch.save(D.state_dict(), 'discriminator.pt')
+
 
 # 保存训练好的模型
-torch.save(G.state_dict(), 'generator.pt')
-torch.save(D.state_dict(), 'discriminator.pt')
+if torch.cuda.is_available():
+    torch.save(G.state_dict(), 'generator_gpu.pt')
+    torch.save(D.state_dict(), 'discriminator_gpu.pt')
+else:
+    torch.save(G.state_dict(), 'generator.pt')
+    torch.save(D.state_dict(), 'discriminator.pt')
+
