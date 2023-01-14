@@ -51,8 +51,12 @@ G = Generator(input_size, hidden_size, output_size)
 D = Discriminator(input_size, hidden_size, output_size)
 
 try:
-    G.load_state_dict(torch.load("generator.pt"))
-    D.load_state_dict(torch.load("discriminator.pt"))
+    if torch.cuda.is_available():
+        G.load_state_dict(torch.load("generator_gpu.pt"))
+        D.load_state_dict(torch.load("discriminator_gpu.pt"))
+    else:
+        G.load_state_dict(torch.load("generator.pt"))
+        D.load_state_dict(torch.load("discriminator.pt"))
 except Exception as e:
     print("No pretrained models are found")
 
@@ -81,6 +85,7 @@ for epoch in range(num_epochs):
         # 训练判别器
         D.zero_grad()
         noise = Variable(torch.randn(batch_size, input_size).to(device))
+        noise.to(device)
         fake_images = G(noise)
         real_outputs = D(real_images)
         fake_outputs = D(fake_images)
@@ -91,8 +96,8 @@ for epoch in range(num_epochs):
         # 训练生成器
         G.zero_grad()
         noise = Variable(torch.randn(batch_size, input_size))
-        fake_images = G(noise)
-        fake_outputs = D(fake_images)
+        fake_images = G(noise.to(device))
+        fake_outputs = D(fake_images.to(device))
         G_loss = -torch.mean(torch.log(fake_outputs))
         G_loss.backward()
         G_optimizer.step()
