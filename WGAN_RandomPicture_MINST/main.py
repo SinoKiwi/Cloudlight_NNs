@@ -48,7 +48,7 @@ else:
 G.eval()
 
 noise = Variable(torch.randn(batch_size, input_size))
-fake_images = G(noise)
+fake_images = G(noise.to(device))
 '''fake_images = fake_images.view(-1, 28, 28)
 
 # 保存生成的图像
